@@ -1,157 +1,324 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>kamil SHOP</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kamil Shop - بيع وشراء</title>
 <style>
-  :root{--bg:#f5f7fb;--card:#fff;--muted:#6b7280;--accent:#2563eb;--radius:12px;font-family:Arial, sans-serif;}
-  *{box-sizing:border-box;}
-  body{margin:0;background:var(--bg);color:#0f1724;}
-  header{background:var(--accent);color:white;padding:16px;text-align:center;}
-  .wrap{max-width:1100px;margin:20px auto;padding:0 16px;}
-  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:16px;}
-  .card{background:var(--card);border-radius:var(--radius);padding:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06);display:flex;flex-direction:column;}
-  .card img{width:100%;border-radius:var(--radius);aspect-ratio:4/3;object-fit:cover;}
-  .title{font-weight:700;margin:6px 0;}
-  .price{color:var(--accent);font-weight:700;}
-  .desc{font-size:14px;color:#334155;margin:6px 0;}
-  .cat{font-size:13px;color:var(--muted);}
-  .btn{padding:8px 12px;border:none;border-radius:8px;background:var(--accent);color:white;cursor:pointer;font-weight:600;}
-  .modal-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;padding:20px;z-index:100;}
-  .modal{background:white;padding:16px;border-radius:var(--radius);max-width:500px;width:100%;}
-  .input, select, textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6eef8;margin-top:6px;}
-  .img-preview{width:100%;height:150px;object-fit:cover;border-radius:8px;margin-top:6px;background:#f3f6fb;}
-  @media(max-width:940px){.grid{grid-template-columns:repeat(2,1fr);}}
-  @media(max-width:640px){.grid{grid-template-columns:1fr;}}
-
-  /* زر إضافة منتوج ثابت على الجانب */
-  #openAdd {
-    position: fixed;
-    right: 20px;
-    top: 100px;
-    padding: 12px 18px;
-    border: 2px solid red;
-    background: white;
-    color: black;
-    font-weight: 700;
-    border-radius: 8px;
-    cursor: pointer;
-    z-index: 1000;
-  }
-  #openAdd:hover {
-    background: red;
-    color: white;
-  }
+:root{--bg:#f5f7fb;--card:#fff;--accent:#2563eb;--muted:#6b7280;--radius:12px;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#0f1724}
+header{background:linear-gradient(90deg,#0ea5a9,#3b82f6);color:white;padding:14px 20px}
+.wrap{max-width:1100px;margin:18px auto;padding:0 16px}
+.brand{display:flex;gap:12px;align-items:center}
+.brand h1{margin:0;font-size:20px}
+.top-controls{display:flex;gap:12px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.btn{padding:10px 12px;border-radius:10px;border:none;cursor:pointer;background:var(--accent);color:white;font-weight:600}
+.input,select{padding:10px;border-radius:10px;border:1px solid #e6eef8;background:white}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
+.card{background:var(--card);border-radius:12px;padding:12px;box-shadow:0 6px 18px rgba(12,18,26,0.06);display:flex;flex-direction:column}
+.thumb{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px}
+.meta{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.title{font-weight:700}
+.price{color:var(--accent);font-weight:700}
+.cat{font-size:13px;color:var(--muted)}
+.actions{display:flex;gap:8px;margin-top:10px}
+.user-badge{background:rgba(255,255,255,0.12);padding:8px 10px;border-radius:10px}
+.modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:60}
+.modal{background:white;border-radius:12px;max-width:720px;width:100%;padding:18px}
+.form-grid{display:grid;grid-template-columns:1fr 180px;gap:12px}
+label{display:block;font-size:13px;margin-bottom:6px}
+textarea{min-height:100px;padding:10px;border-radius:10px;border:1px solid #e6eef8}
+.img-preview{width:100%;height:100%;border-radius:8px;object-fit:cover;background:#f3f6fb;display:block}
+.chat-message{padding:8px;margin-top:6px;border-radius:10px;max-width:80%}
+.chat-message.self{background:#2563eb;color:white;margin-left:auto}
+.chat-message.other{background:#f3f6fb;color:#0f1724;margin-right:auto}
+@media(max-width:940px){.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:640px){.grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
-<header>
-  <h1>Kamil Shop</h1>
-</header>
-<button class="btn" id="openAdd">+ أضف منتوج</button>
-<main class="wrap" id="categories">
-  <!-- التصنيفات ستضاف هنا تلقائياً -->
-</main>
 
-<!-- Modal إضافة منتوج -->
-<div class="modal-backdrop" id="backdropAdd">
-  <div class="modal">
-    <h3>أضف منتوج</h3>
-    <form id="addForm">
-      <label>اسم المنتج</label>
-      <input name="title" class="input" required />
-      <label>السعر</label>
-      <input name="price" class="input" required />
-      <label>الوصف</label>
-      <textarea name="desc" class="input"></textarea>
-      <label>التصنيف</label>
-      <select name="category" class="input">
-        <option value="كتب">كتب</option>
-        <option value="أدوات">أدوات</option>
-        <option value="ألبسة">ألبسة</option>
-        <option value="أخرى">أخرى</option>
-      </select>
-      <label>صورة المنتج</label>
-      <input type="file" id="imageInput" accept="image/*" class="input" required />
-      <img id="imgPreview" class="img-preview" alt="معاينة الصورة" />
-      <label>اسم البائع</label>
-      <input name="owner" class="input" required />
-      <div style="margin-top:10px;display:flex;gap:8px;">
-        <button type="submit" class="btn">نشر</button>
-        <button type="button" id="closeAdd" class="btn" style="background:#6b7280;">إلغاء</button>
-      </div>
-    </form>
-  </div>
+<header>
+<div class="wrap" id="headerWrap">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div class="brand">
+<h1>Kamil Shop</h1>
+<div style="font-size:13px;color:rgba(255,255,255,0.9)">بيع وشرِ منتجات مع حسابات</div>
+</div>
+<div id="authArea" style="display:flex;gap:8px;align-items:center"></div>
+</div>
+</div>
+</header>
+
+<main class="wrap">
+<div class="top-controls">
+<div class="controls">
+<button class="btn" id="openAdd">+ زِيد منتوج</button>
+<select id="categoryFilter" class="input"><option value="all">جميع التصنيفات</option></select>
+</div>
+<div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+<input id="search" class="input" placeholder="قَلّب على اسم أو وصف" />
+<button class="btn" id="openChat">الدردشة</button>
+</div>
 </div>
 
-<script>
-let items = JSON.parse(localStorage.getItem('items')||'[]');
-const categories = ['كتب','أدوات','ألبسة','أخرى'];
-const main = document.getElementById('categories');
-const imageInput = document.getElementById('imageInput');
-const imgPreview = document.getElementById('imgPreview');
+<div id="grid" class="grid" aria-live="polite"></div>
+</main>
 
-function saveItems(){ localStorage.setItem('items',JSON.stringify(items)); }
+<!-- Add product modal -->
+<div id="backdropAdd" class="modal-backdrop">
+<div class="modal">
+<h3>زِيد منتوج</h3>
+<form id="addForm" style="margin-top:12px">
+<div class="form-grid">
+<div>
+<label>العنوان</label><input name="title" required class="input" />
+<label>السعر (درهم)</label><input name="price" required class="input" />
+<label>التصنيف</label>
+<select name="category" class="input" required>
+<option value="Electronics">الكترونيات</option>
+<option value="Clothes">ألبسة</option>
+<option value="Home">الدار</option>
+<option value="Other">أخرى</option>
+</select>
+<label>الوصف</label><textarea name="desc" class="input"></textarea>
+</div>
+<div>
+<label>صورة المنتج</label>
+<input type="file" accept="image/*" id="imageInput" required />
+<img id="imgPreview" class="img-preview" />
+</div>
+</div>
+<div style="display:flex;gap:8px;margin-top:14px">
+<button type="submit" class="btn">نشر</button>
+<button type="button" id="closeAdd" class="input">إلغاء</button>
+</div>
+</form>
+</div>
+</div>
 
-function render(){
-  main.innerHTML='';
-  categories.forEach(cat=>{
-    const catItems = items.filter(i=>i.category===cat && i.owner);
-    if(catItems.length===0) return;
-    const section = document.createElement('section');
-    const h = document.createElement('h2'); h.textContent=cat; section.appendChild(h);
-    const grid = document.createElement('div'); grid.className='grid';
-    catItems.forEach(item=>{
-      const card = document.createElement('div'); card.className='card';
-      card.innerHTML=`
-        <img src="${item.image}" alt="${item.title}" />
-        <div class="title">${item.title}</div>
-        <div class="price">${item.price} د.م</div>
-        <div class="desc">${item.desc||''}</div>
-        <div class="cat">البائع: ${item.owner}</div>
-        <div class="btn" onclick="contact('${item.id}')">تواصل / اشري</div>
-      `;
-      grid.appendChild(card);
-    });
-    section.appendChild(grid);
-    main.appendChild(section);
-  });
+<!-- Auth modal -->
+<div id="backdropAuth" class="modal-backdrop">
+<div class="modal">
+<h3 id="authTitle">تسجيل</h3>
+<form id="authForm" style="margin-top:12px">
+<label>البريد الإلكتروني</label><input name="email" type="email" class="input" required />
+<label>كلمة السر</label><input name="password" type="password" class="input" required />
+<div style="display:flex;gap:8px;margin-top:8px">
+<button class="btn" type="submit">مواصلة</button>
+<button type="button" id="toggleAuth" class="input">تبديل</button>
+<button type="button" id="closeAuth" class="input">سدل</button>
+</div>
+</form>
+</div>
+</div>
+
+<!-- Chat modal -->
+<div id="backdropChat" class="modal-backdrop">
+<div class="modal">
+<h3>الدردشة الخاصة</h3>
+<div id="chatContainer" style="max-height:300px;overflow-y:auto;"></div>
+<input id="msgInput" class="input" placeholder="اكتب رسالة..." />
+<button id="sendMsg" class="btn" style="margin-top:6px">إرسال</button>
+<button id="closeChat" class="input" style="margin-top:6px">سدل</button>
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-storage.js";
+
+// =======================
+// ضع هنا config ديالك من Firebase
+const firebaseConfig = {
+    apiKey: "حط هنا API Key",
+    authDomain: "حط هنا authDomain",
+    projectId: "حط هنا projectId",
+    storageBucket: "حط هنا storageBucket",
+    messagingSenderId: "حط هنا messagingSenderId",
+    appId: "حط هنا appId",
+    measurementId: "حط هنا measurementId"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+// عناصر
+const authArea = document.getElementById("authArea");
+const openAdd = document.getElementById("openAdd");
+const backdropAdd = document.getElementById("backdropAdd");
+const closeAdd = document.getElementById("closeAdd");
+const addForm = document.getElementById("addForm");
+const imageInput = document.getElementById("imageInput");
+const imgPreview = document.getElementById("imgPreview");
+const grid = document.getElementById("grid");
+const categoryFilter = document.getElementById("categoryFilter");
+const search = document.getElementById("search");
+
+const backdropAuth = document.getElementById("backdropAuth");
+const authForm = document.getElementById("authForm");
+const authTitle = document.getElementById("authTitle");
+const toggleAuth = document.getElementById("toggleAuth");
+const closeAuth = document.getElementById("closeAuth");
+
+const openChat = document.getElementById("openChat");
+const backdropChat = document.getElementById("backdropChat");
+const closeChat = document.getElementById("closeChat");
+const chatContainer = document.getElementById("chatContainer");
+const msgInput = document.getElementById("msgInput");
+const sendMsg = document.getElementById("sendMsg");
+
+let currentUser = null;
+let authMode = "register";
+let imageData = null;
+
+// =======================
+// Helpers
+function renderAuthArea(){
+authArea.innerHTML="";
+if(currentUser){
+let div = document.createElement("div"); div.className="user-badge"; div.textContent=currentUser.email; authArea.appendChild(div);
+let btn = document.createElement("button"); btn.className="input"; btn.textContent="خرج"; btn.onclick=()=>{signOut(auth).then(()=>{currentUser=null;renderAuthArea(); loadProducts();});};
+authArea.appendChild(btn);
+}else{
+let btn = document.createElement("button"); btn.className="btn"; btn.textContent="دخول/تسجيل"; btn.onclick=()=>{backdropAuth.style.display="flex";};
+authArea.appendChild(btn);
+}
 }
 
-function uid(){ return Math.random().toString(36).slice(2,9); }
+// =======================
+// Auth form
+toggleAuth.onclick=()=>{
+authMode = authMode==="register"?"login":"register";
+authTitle.textContent = authMode==="register"?"تسجيل":"دخول";
+};
 
-imageInput.addEventListener('change', e=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  const reader = new FileReader();
-  reader.onload = ()=> imgPreview.src = reader.result;
-  reader.readAsDataURL(file);
+closeAuth.onclick=()=>{backdropAuth.style.display="none"; authForm.reset();};
+
+authForm.onsubmit=async e=>{
+e.preventDefault();
+const email = authForm.email.value.trim();
+const password = authForm.password.value.trim();
+try{
+if(authMode==="register"){
+await createUserWithEmailAndPassword(auth, email, password);
+}else{
+await signInWithEmailAndPassword(auth,email,password);
+}
+currentUser = auth.currentUser;
+renderAuthArea();
+backdropAuth.style.display="none";
+authForm.reset();
+loadProducts();
+}catch(err){alert(err.message);}
+};
+
+// =======================
+// Add product
+openAdd.onclick=()=>{if(!currentUser){alert("خاصّك تدخل");return;} backdropAdd.style.display="flex";};
+closeAdd.onclick=()=>{backdropAdd.style.display="none"; addForm.reset(); imgPreview.src="";};
+
+imageInput.onchange=e=>{
+const file = e.target.files[0];
+if(!file) return;
+const reader = new FileReader();
+reader.onload=()=>imgPreview.src=reader.result;
+reader.readAsDataURL(file);
+};
+
+addForm.onsubmit=async e=>{
+e.preventDefault();
+const title = addForm.title.value.trim();
+const price = addForm.price.value.trim();
+const category = addForm.category.value;
+const desc = addForm.desc.value.trim();
+if(!imageInput.files[0]){alert("حط صورة"); return;}
+const imgFile = imageInput.files[0];
+const storageRef = ref(storage,"images/"+Date.now()+"_"+imgFile.name);
+await uploadBytes(storageRef,imgFile);
+const imgUrl = await getDownloadURL(storageRef);
+
+await addDoc(collection(db,"products"),{
+title, price, category, desc, image: imgUrl, owner: currentUser.uid, created:Date.now()
 });
 
-document.getElementById('openAdd').addEventListener('click',()=>{ document.getElementById('backdropAdd').style.display='flex'; });
-document.getElementById('closeAdd').addEventListener('click',()=>{ document.getElementById('backdropAdd').style.display='none'; imgPreview.src=''; });
+backdropAdd.style.display="none";
+addForm.reset();
+imgPreview.src="";
+loadProducts();
+};
 
-document.getElementById('addForm').addEventListener('submit',e=>{
-  e.preventDefault();
-  if(!imgPreview.src) return alert('المرجو إضافة صورة.');
-  const fd = new FormData(e.target);
-  const newItem = { id:uid(), title:fd.get('title'), price:fd.get('price'), desc:fd.get('desc'), category:fd.get('category'), image:imgPreview.src, owner:fd.get('owner') };
-  items.unshift(newItem);
-  saveItems();
-  render();
-  e.target.reset();
-  imgPreview.src='';
-  document.getElementById('backdropAdd').style.display='none';
+// =======================
+// Load products
+async function loadProducts(){
+grid.innerHTML="";
+let q = collection(db,"products");
+if(categoryFilter.value!=="all"){ q = query(q, where("category","==",categoryFilter.value)); }
+const snap = await getDocs(q);
+snap.forEach(doc=>{
+const item = doc.data();
+const el = document.createElement("article"); el.className="card";
+el.innerHTML=`
+<img class="thumb" src="${item.image}" />
+<div class="meta">
+<div><div class="title">${item.title}</div><div class="cat">${item.category}</div></div>
+<div class="price">${item.price} د.م</div>
+</div>
+<div style="margin-top:6px">${item.desc||""}</div>
+<div class="actions">
+<button class="btn chatBtn" data-id="${doc.id}">تواصل / اشري</button>
+</div>
+`;
+grid.appendChild(el);
 });
 
-function contact(id){
-  const item = items.find(i=>i.id===id);
-  const msg = prompt(`تواصل مع البائع\nمنتوج: ${item.title}\nالسعر: ${item.price} د.م\nاكتب رسالتك:`);
-  if(msg) alert('رسالتك تمّ حفظها محلياً');
+// add chat buttons
+document.querySelectorAll(".chatBtn").forEach(btn=>{
+btn.onclick=()=>openChatWith(btn.dataset.id);
+});
 }
 
-render();
+// =======================
+// Chat
+let currentChatId = null;
+function openChatWith(pid){currentChatId=pid;backdropChat.style.display="flex"; loadChat();}
+closeChat.onclick=()=>{backdropChat.style.display="none"; chatContainer.innerHTML="";};
+sendMsg.onclick=async ()=>{
+if(!msgInput.value.trim()) return;
+await addDoc(collection(db,"messages"),{
+pid:currentChatId, uid:currentUser.uid, text: msgInput.value.trim(), created:Date.now()
+});
+msgInput.value="";
+loadChat();
+};
+async function loadChat(){
+chatContainer.innerHTML="";
+const q = query(collection(db,"messages"), where("pid","==",currentChatId), orderBy("created"));
+const snap = await getDocs(q);
+snap.forEach(doc=>{
+const m = doc.data();
+const div = document.createElement("div");
+div.className="chat-message "+(m.uid===currentUser.uid?"self":"other");
+div.textContent=m.text;
+chatContainer.appendChild(div);
+});
+chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// =======================
+// Filters
+categoryFilter.onchange=loadProducts;
+search.oninput=loadProducts;
+
+// =======================
+// Init
+renderAuthArea();
+auth.onAuthStateChanged(u=>{currentUser=u; renderAuthArea(); loadProducts();});
+
 </script>
 </body>
 </html>
