@@ -1,145 +1,25 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Kamil Shop - بيع وشراء</title>
-<style>
-:root{--bg:#f5f7fb;--card:#fff;--accent:#2563eb;--muted:#6b7280;--radius:12px;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif;}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:#0f1724}
-header{background:linear-gradient(90deg,#0ea5a9,#3b82f6);color:white;padding:14px 20px}
-.wrap{max-width:1100px;margin:18px auto;padding:0 16px}
-.brand{display:flex;gap:12px;align-items:center}
-.brand h1{margin:0;font-size:20px}
-.top-controls{display:flex;gap:12px;align-items:center;margin-top:12px;flex-wrap:wrap}
-.btn{padding:10px 12px;border-radius:10px;border:none;cursor:pointer;background:var(--accent);color:white;font-weight:600}
-.input,select{padding:10px;border-radius:10px;border:1px solid #e6eef8;background:white}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:18px}
-.card{background:var(--card);border-radius:12px;padding:12px;box-shadow:0 6px 18px rgba(12,18,26,0.06);display:flex;flex-direction:column}
-.thumb{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px}
-.meta{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
-.title{font-weight:700}
-.price{color:var(--accent);font-weight:700}
-.cat{font-size:13px;color:var(--muted)}
-.actions{display:flex;gap:8px;margin-top:10px}
-.user-badge{background:rgba(255,255,255,0.12);padding:8px 10px;border-radius:10px}
-.modal-backdrop{position:fixed;inset:0;background:rgba(2,6,23,0.45);display:none;align-items:center;justify-content:center;padding:20px;z-index:60}
-.modal{background:white;border-radius:12px;max-width:720px;width:100%;padding:18px}
-.form-grid{display:grid;grid-template-columns:1fr 180px;gap:12px}
-label{display:block;font-size:13px;margin-bottom:6px}
-textarea{min-height:100px;padding:10px;border-radius:10px;border:1px solid #e6eef8}
-.img-preview{width:100%;height:100%;border-radius:8px;object-fit:cover;background:#f3f6fb;display:block}
-.chat-message{padding:8px;margin-top:6px;border-radius:10px;max-width:80%}
-.chat-message.self{background:#2563eb;color:white;margin-left:auto}
-.chat-message.other{background:#f3f6fb;color:#0f1724;margin-right:auto}
-@media(max-width:940px){.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:640px){.grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}}
-</style>
-</head>
-<body>
-
-<header>
-<div class="wrap" id="headerWrap">
-<div style="display:flex;justify-content:space-between;align-items:center">
-<div class="brand">
-<h1>Kamil Shop</h1>
-<div style="font-size:13px;color:rgba(255,255,255,0.9)">بيع وشرِ منتجات مع حسابات</div>
-</div>
-<div id="authArea" style="display:flex;gap:8px;align-items:center"></div>
-</div>
-</div>
-</header>
-
-<main class="wrap">
-<div class="top-controls">
-<div class="controls">
-<button class="btn" id="openAdd">+ زِيد منتوج</button>
-<select id="categoryFilter" class="input"><option value="all">جميع التصنيفات</option></select>
-</div>
-<div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
-<input id="search" class="input" placeholder="قَلّب على اسم أو وصف" />
-<button class="btn" id="openChat">الدردشة</button>
-</div>
-</div>
-
-<div id="grid" class="grid" aria-live="polite"></div>
-</main>
-
-<!-- Add product modal -->
-<div id="backdropAdd" class="modal-backdrop">
-<div class="modal">
-<h3>زِيد منتوج</h3>
-<form id="addForm" style="margin-top:12px">
-<div class="form-grid">
-<div>
-<label>العنوان</label><input name="title" required class="input" />
-<label>السعر (درهم)</label><input name="price" required class="input" />
-<label>التصنيف</label>
-<select name="category" class="input" required>
-<option value="Electronics">الكترونيات</option>
-<option value="Clothes">ألبسة</option>
-<option value="Home">الدار</option>
-<option value="Other">أخرى</option>
-</select>
-<label>الوصف</label><textarea name="desc" class="input"></textarea>
-</div>
-<div>
-<label>صورة المنتج</label>
-<input type="file" accept="image/*" id="imageInput" required />
-<img id="imgPreview" class="img-preview" />
-</div>
-</div>
-<div style="display:flex;gap:8px;margin-top:14px">
-<button type="submit" class="btn">نشر</button>
-<button type="button" id="closeAdd" class="input">إلغاء</button>
-</div>
-</form>
-</div>
-</div>
-
-<!-- Auth modal -->
-<div id="backdropAuth" class="modal-backdrop">
-<div class="modal">
-<h3 id="authTitle">تسجيل</h3>
-<form id="authForm" style="margin-top:12px">
-<label>البريد الإلكتروني</label><input name="email" type="email" class="input" required />
-<label>كلمة السر</label><input name="password" type="password" class="input" required />
-<div style="display:flex;gap:8px;margin-top:8px">
-<button class="btn" type="submit">مواصلة</button>
-<button type="button" id="toggleAuth" class="input">تبديل</button>
-<button type="button" id="closeAuth" class="input">سدل</button>
-</div>
-</form>
-</div>
-</div>
-
-<!-- Chat modal -->
-<div id="backdropChat" class="modal-backdrop">
-<div class="modal">
-<h3>الدردشة الخاصة</h3>
-<div id="chatContainer" style="max-height:300px;overflow-y:auto;"></div>
-<input id="msgInput" class="input" placeholder="اكتب رسالة..." />
-<button id="sendMsg" class="btn" style="margin-top:6px">إرسال</button>
-<button id="closeChat" class="input" style="margin-top:6px">سدل</button>
-</div>
-</div>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kamil Shop Firebase</title>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-storage.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
 
-// =======================
-// ضع هنا config ديالك من Firebase
+// Replace with your Firebase config
 const firebaseConfig = {
-    apiKey: "حط هنا API Key",
-    authDomain: "حط هنا authDomain",
-    projectId: "حط هنا projectId",
-    storageBucket: "حط هنا storageBucket",
-    messagingSenderId: "حط هنا messagingSenderId",
-    appId: "حط هنا appId",
-    measurementId: "حط هنا measurementId"
+    apiKey: "AIzaSyBveM-Qj3iLz8sMQhB5QDiStAtHwB1_ZLU",
+    authDomain: "kamil-shop-3fd8b.firebaseapp.com",
+    projectId: "kamil-shop-3fd8b",
+    storageBucket: "kamil-shop-3fd8b.appspot.com",
+    messagingSenderId: "806502993381",
+    appId: "1:806502993381:web:77c3a5cad63fb699c2330c",
+    measurementId: "G-7419GNWM9E"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -147,178 +27,176 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-// عناصر
-const authArea = document.getElementById("authArea");
-const openAdd = document.getElementById("openAdd");
-const backdropAdd = document.getElementById("backdropAdd");
-const closeAdd = document.getElementById("closeAdd");
-const addForm = document.getElementById("addForm");
-const imageInput = document.getElementById("imageInput");
-const imgPreview = document.getElementById("imgPreview");
-const grid = document.getElementById("grid");
-const categoryFilter = document.getElementById("categoryFilter");
-const search = document.getElementById("search");
+// Elements
+const loginForm = document.getElementById('loginForm');
+const emailInput = document.getElementById('email');
+const passInput = document.getElementById('password');
+const registerBtn = document.getElementById('registerBtn');
+const loginBtn = document.getElementById('loginBtn');
+const logoutBtn = document.getElementById('logoutBtn');
 
-const backdropAuth = document.getElementById("backdropAuth");
-const authForm = document.getElementById("authForm");
-const authTitle = document.getElementById("authTitle");
-const toggleAuth = document.getElementById("toggleAuth");
-const closeAuth = document.getElementById("closeAuth");
+const uploadForm = document.getElementById('uploadForm');
+const imgInput = document.getElementById('imgInput');
+const imgPreview = document.getElementById('imgPreview');
+const nameInput = document.getElementById('nameInput');
+const descInput = document.getElementById('descInput');
+const priceInput = document.getElementById('priceInput');
+const galleryDiv = document.getElementById('gallery');
+const sideBtn = document.getElementById('sideBtn');
 
-const openChat = document.getElementById("openChat");
-const backdropChat = document.getElementById("backdropChat");
-const closeChat = document.getElementById("closeChat");
-const chatContainer = document.getElementById("chatContainer");
-const msgInput = document.getElementById("msgInput");
-const sendMsg = document.getElementById("sendMsg");
+let formVisible = false;
 
-let currentUser = null;
-let authMode = "register";
-let imageData = null;
-
-// =======================
-// Helpers
-function renderAuthArea(){
-authArea.innerHTML="";
-if(currentUser){
-let div = document.createElement("div"); div.className="user-badge"; div.textContent=currentUser.email; authArea.appendChild(div);
-let btn = document.createElement("button"); btn.className="input"; btn.textContent="خرج"; btn.onclick=()=>{signOut(auth).then(()=>{currentUser=null;renderAuthArea(); loadProducts();});};
-authArea.appendChild(btn);
-}else{
-let btn = document.createElement("button"); btn.className="btn"; btn.textContent="دخول/تسجيل"; btn.onclick=()=>{backdropAuth.style.display="flex";};
-authArea.appendChild(btn);
-}
-}
-
-// =======================
-// Auth form
-toggleAuth.onclick=()=>{
-authMode = authMode==="register"?"login":"register";
-authTitle.textContent = authMode==="register"?"تسجيل":"دخول";
-};
-
-closeAuth.onclick=()=>{backdropAuth.style.display="none"; authForm.reset();};
-
-authForm.onsubmit=async e=>{
-e.preventDefault();
-const email = authForm.email.value.trim();
-const password = authForm.password.value.trim();
-try{
-if(authMode==="register"){
-await createUserWithEmailAndPassword(auth, email, password);
-}else{
-await signInWithEmailAndPassword(auth,email,password);
-}
-currentUser = auth.currentUser;
-renderAuthArea();
-backdropAuth.style.display="none";
-authForm.reset();
-loadProducts();
-}catch(err){alert(err.message);}
-};
-
-// =======================
-// Add product
-openAdd.onclick=()=>{if(!currentUser){alert("خاصّك تدخل");return;} backdropAdd.style.display="flex";};
-closeAdd.onclick=()=>{backdropAdd.style.display="none"; addForm.reset(); imgPreview.src="";};
-
-imageInput.onchange=e=>{
-const file = e.target.files[0];
-if(!file) return;
-const reader = new FileReader();
-reader.onload=()=>imgPreview.src=reader.result;
-reader.readAsDataURL(file);
-};
-
-addForm.onsubmit=async e=>{
-e.preventDefault();
-const title = addForm.title.value.trim();
-const price = addForm.price.value.trim();
-const category = addForm.category.value;
-const desc = addForm.desc.value.trim();
-if(!imageInput.files[0]){alert("حط صورة"); return;}
-const imgFile = imageInput.files[0];
-const storageRef = ref(storage,"images/"+Date.now()+"_"+imgFile.name);
-await uploadBytes(storageRef,imgFile);
-const imgUrl = await getDownloadURL(storageRef);
-
-await addDoc(collection(db,"products"),{
-title, price, category, desc, image: imgUrl, owner: currentUser.uid, created:Date.now()
+// Toggle form
+sideBtn.addEventListener('click', ()=>{
+    formVisible = !formVisible;
+    if(formVisible){
+        uploadForm.style.display='block';
+        uploadForm.classList.add('fade-in');
+        sideBtn.textContent='-';
+    } else {
+        uploadForm.classList.add('fade-out');
+        setTimeout(()=>{ uploadForm.style.display='none'; uploadForm.classList.remove('fade-out'); },400);
+        sideBtn.textContent='+';
+    }
 });
 
-backdropAdd.style.display="none";
-addForm.reset();
-imgPreview.src="";
-loadProducts();
-};
-
-// =======================
-// Load products
-async function loadProducts(){
-grid.innerHTML="";
-let q = collection(db,"products");
-if(categoryFilter.value!=="all"){ q = query(q, where("category","==",categoryFilter.value)); }
-const snap = await getDocs(q);
-snap.forEach(doc=>{
-const item = doc.data();
-const el = document.createElement("article"); el.className="card";
-el.innerHTML=`
-<img class="thumb" src="${item.image}" />
-<div class="meta">
-<div><div class="title">${item.title}</div><div class="cat">${item.category}</div></div>
-<div class="price">${item.price} د.م</div>
-</div>
-<div style="margin-top:6px">${item.desc||""}</div>
-<div class="actions">
-<button class="btn chatBtn" data-id="${doc.id}">تواصل / اشري</button>
-</div>
-`;
-grid.appendChild(el);
+// Image preview
+imgInput.addEventListener('change', ()=>{
+    const file = imgInput.files[0];
+    if(file && file.type.startsWith('image/')){
+        const reader = new FileReader();
+        reader.onload = e => { imgPreview.src = e.target.result; imgPreview.style.display='block'; };
+        reader.readAsDataURL(file);
+    } else { imgPreview.style.display='none'; imgPreview.src=''; }
 });
 
-// add chat buttons
-document.querySelectorAll(".chatBtn").forEach(btn=>{
-btn.onclick=()=>openChatWith(btn.dataset.id);
+// Register/Login
+registerBtn.addEventListener('click', async ()=>{
+    const email = emailInput.value;
+    const password = passInput.value;
+    if(!email||!password){ alert('Fill all'); return; }
+    try{ await createUserWithEmailAndPassword(auth,email,password); alert('Account created!'); }
+    catch(e){ alert(e.message); }
 });
+
+loginBtn.addEventListener('click', async ()=>{
+    const email = emailInput.value;
+    const password = passInput.value;
+    if(!email||!password){ alert('Fill all'); return; }
+    try{ await signInWithEmailAndPassword(auth,email,password); alert('Logged in!'); }
+    catch(e){ alert(e.message); }
+});
+
+logoutBtn.addEventListener('click', async ()=>{ await signOut(auth); });
+
+onAuthStateChanged(auth,user=>{
+    if(user){
+        logoutBtn.style.display='inline-block';
+        loginForm.style.display='none';
+        loadGallery(user.uid);
+    }else{
+        logoutBtn.style.display='none';
+        loginForm.style.display='block';
+        galleryDiv.innerHTML='';
+    }
+});
+
+// Load gallery for user
+async function loadGallery(uid){
+    galleryDiv.innerHTML='';
+    const q = query(collection(db,'products'), where('owner','==',uid));
+    const snapshot = await getDocs(q);
+    snapshot.forEach(doc=>{
+        const data = doc.data();
+        const card = document.createElement('div');
+        card.className='card';
+        card.innerHTML=`
+            <img src="${data.imgUrl}" alt="Product">
+            <div class="info">
+                <h3>${data.name}</h3>
+                <p>${data.desc}</p>
+                <p class="price">${data.price} DH</p>
+            </div>
+            <div class="chat-icon" onclick="alert('Chat demo')">💬</div>
+        `;
+        galleryDiv.appendChild(card);
+    });
 }
 
-// =======================
-// Chat
-let currentChatId = null;
-function openChatWith(pid){currentChatId=pid;backdropChat.style.display="flex"; loadChat();}
-closeChat.onclick=()=>{backdropChat.style.display="none"; chatContainer.innerHTML="";};
-sendMsg.onclick=async ()=>{
-if(!msgInput.value.trim()) return;
-await addDoc(collection(db,"messages"),{
-pid:currentChatId, uid:currentUser.uid, text: msgInput.value.trim(), created:Date.now()
+// Upload product
+document.getElementById('uploadBtn').addEventListener('click', async ()=>{
+    const user = auth.currentUser;
+    if(!user){ alert('Login first'); return; }
+    if(!imgInput.files[0] || !nameInput.value || !descInput.value || !priceInput.value){ alert('Fill all'); return; }
+
+    const file = imgInput.files[0];
+    if(!file.type.startsWith('image/')){ alert('Choose image only'); return; }
+
+    const storageRef = ref(storage, 'products/' + Date.now() + '-' + file.name);
+    await uploadBytes(storageRef, file);
+    const imgUrl = await getDownloadURL(storageRef);
+
+    await addDoc(collection(db,'products'),{
+        owner: user.uid,
+        name: nameInput.value,
+        desc: descInput.value,
+        price: priceInput.value,
+        imgUrl
+    });
+
+    loadGallery(user.uid);
+
+    // Reset & hide form with fade-out
+    imgInput.value=''; imgPreview.src=''; imgPreview.style.display='none';
+    nameInput.value=''; descInput.value=''; priceInput.value='';
+    uploadForm.classList.add('fade-out');
+    setTimeout(()=>{ uploadForm.style.display='none'; uploadForm.classList.remove('fade-out'); },400);
+    sideBtn.textContent='+';
+    formVisible=false;
 });
-msgInput.value="";
-loadChat();
-};
-async function loadChat(){
-chatContainer.innerHTML="";
-const q = query(collection(db,"messages"), where("pid","==",currentChatId), orderBy("created"));
-const snap = await getDocs(q);
-snap.forEach(doc=>{
-const m = doc.data();
-const div = document.createElement("div");
-div.className="chat-message "+(m.uid===currentUser.uid?"self":"other");
-div.textContent=m.text;
-chatContainer.appendChild(div);
-});
-chatContainer.scrollTop = chatContainer.scrollHeight;
-}
-
-// =======================
-// Filters
-categoryFilter.onchange=loadProducts;
-search.oninput=loadProducts;
-
-// =======================
-// Init
-renderAuthArea();
-auth.onAuthStateChanged(u=>{currentUser=u; renderAuthArea(); loadProducts();});
-
 </script>
+
+<style>
+body{font-family:Arial;text-align:center;background:#fff;margin:0;padding:0}
+.card{width:220px;margin:10px;display:inline-block;vertical-align:top;text-align:left;border-radius:8px;overflow:hidden;box-shadow:0 3px 10px rgba(0,0,0,.15)}
+.card img{width:100%;height:150px;object-fit:cover}
+.card .info{padding:8px}
+.card h3{margin:4px 0;font-size:16px}
+.card p{margin:2px 0;font-size:13px;color:#555}
+.price{font-weight:bold;color:#111}
+.chat-icon{position:absolute;top:10px;right:10px;background:#007bff;color:#fff;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer}
+#uploadForm{display:none;padding:20px;border:1px solid #ddd;width:400px;margin:20px auto;text-align:left;position:relative;opacity:1;transition:opacity .4s}
+#uploadForm.fade-out{opacity:0}
+#uploadForm.fade-in{opacity:1}
+#sideBtn{position:fixed;top:20px;left:20px;padding:10px 14px;background:rgba(0,0,0,.25);color:#fff;border:0;border-radius:6px;cursor:pointer;font-weight:bold}
+#imgPreview{display:none;width:100%;height:150px;object-fit:cover;margin:10px 0;border-radius:6px;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+</style>
+</head>
+<body>
+
+<h1>Kamil Shop Firebase</h1>
+
+<div id="loginForm">
+    <input type="email" id="email" placeholder="Email"><br>
+    <input type="password" id="password" placeholder="Password"><br>
+    <button id="registerBtn">Register</button>
+    <button id="loginBtn">Login</button>
+    <button id="logoutBtn" style="display:none">Logout</button>
+</div>
+
+<button id="sideBtn">+</button>
+
+<div id="uploadForm">
+    <h2>Upload Product</h2>
+    <input type="file" id="imgInput" accept="image/*">
+    <img id="imgPreview" alt="Preview">
+    <input type="text" id="nameInput" placeholder="Smiya dyal produit">
+    <textarea id="descInput" placeholder="Lwasf dyal produit"></textarea>
+    <input type="text" id="priceInput" placeholder="Taman (DH)">
+    <button id="uploadBtn">Upload</button>
+</div>
+
+<div id="gallery"></div>
+
 </body>
 </html>
